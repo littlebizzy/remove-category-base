@@ -131,12 +131,14 @@ final class RVCTBS_Core_Rewrite {
 	private function is_sitepress_active() {
 
 		// Check class
-		if (!class_exists('Sitepress'))
+		if (!class_exists('SitePress'))
 			return false;
 
-		// Check object
+		// Globals
 		global $sitepress;
-		return (!empty($sitepress) && is_object($sitepress));
+
+		// Check object
+		return (!empty($sitepress) && is_object($sitepress) && is_a($sitepress, 'SitePress'));
 	}
 
 
