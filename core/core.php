@@ -105,7 +105,7 @@ final class RVCTBS_Core {
 		// Check redirection query
 		if (!empty($query_vars['rvctbs_category_redirect'])) {
 			require_once RVCTBS_PATH.'/core/redirect.php';
-			return RVCTBS_Core_Rewrite::instance($query_vars['rvctbs_category_redirect']);
+			RVCTBS_Core_Redirect::instance($query_vars['rvctbs_category_redirect']);
 		}
 
 		// Default
