@@ -6,7 +6,7 @@
  * @package Remove Category Base
  * @subpackage Remove Category Base Core
  */
-final class RVCTBS_Core_Rewrite {
+final class RVCTBS_Core_Redirect {
 
 
 
@@ -62,9 +62,8 @@ final class RVCTBS_Core_Rewrite {
 	 */
 	public function redirect($slug) {
 
-		// Check category URL
-		$url = get_term_link($slug, 'category');
-		if (empty($url) || is_wp_error($url))
+		// Check term URL by slug
+		if (false === ($url = $this->get_slug_link($slug)))
 			return;
 
 		// Remove existing headers
@@ -97,6 +96,31 @@ final class RVCTBS_Core_Rewrite {
 				$remove_function? @header_remove($k) : @header($k.':');
 			}
 		}
+	}
+
+
+
+	// Internal
+	// ---------------------------------------------------------------------------------------------------
+
+
+
+	/**
+	 * Retrieve slug link
+	 */
+	private function get_slug_link($slug) {
+
+		// Extract last slug
+		$slug = explode('/', trim($slug, '/'));
+		$slug = $slug[count($slug) - 1];
+
+		// Check result
+		if (empty($slug))
+			return false;
+
+		// Check category URL
+		$url = get_term_link($slug, 'category');
+		return (empty($url) || is_wp_error($url))? false : $url;
 	}
 
 
