@@ -68,7 +68,7 @@ final class RVCTBS_Core_Rewrite {
 			return;
 
 		// Remove existing headers
-		$this->removeHeaders();
+		$this->remove_headers();
 
 		// Do the redirection
 		wp_redirect($url, 301);
@@ -82,7 +82,7 @@ final class RVCTBS_Core_Rewrite {
 	/**
 	 * Remove any existing header
 	 */
-	private function removeHeaders() {
+	private function remove_headers() {
 
 		// Check headers list
 		$headers = @headers_list();
