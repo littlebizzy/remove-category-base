@@ -23,5 +23,6 @@ define('RVCTBS_VERSION', '1.0.0');
 require_once RVCTBS_PATH.'/core/core.php';
 RVCTBS_Core::instance();
 
-register_activation_hook(__FILE__, 'flush_rewrite_rules');
+// Plugin hooks
+register_activation_hook(__FILE__, array(RVCTBS_Core::instance(), 'activation'));
 register_deactivation_hook(__FILE__, array(RVCTBS_Core::instance(), 'deactivation'));

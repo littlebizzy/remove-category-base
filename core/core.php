@@ -22,6 +22,13 @@ final class RVCTBS_Core {
 
 
 
+	/**
+	 * Original category permastruct
+	 */
+	private $old_category_permastruct;
+
+
+
 	// Initialization
 	// ---------------------------------------------------------------------------------------------------
 
@@ -48,7 +55,7 @@ final class RVCTBS_Core {
 	private function __construct() {
 
 		// Initialization
-		add_action('init', array(&$this, 'category_permastruct'));
+		add_action('init', array(&$this, 'new_category_permastruct'));
 
 		// Category operations
 		add_action('created_category', 	'flush_rewrite_rules');
@@ -75,13 +82,18 @@ final class RVCTBS_Core {
 	/**
 	 * Configure category permalink
 	 */
-	public function category_permastruct() {
+	public function new_category_permastruct() {
 
 		// Globals
-		global $wp_version, $wp_rewrite;
+		global $wp_rewrite;
 
-		// Configuring based on WP version
-		$key = ($wp_version >= 3.4)? 'struct' : 0;
+		// Valid permastruct key
+		$key = $this->get_permastruct_key();
+
+		// Save old version
+		$this->old_category_permastruct = $wp_rewrite->extra_permastructs['category'][$key];
+
+		// Set the new permastruct
 		$wp_rewrite->extra_permastructs['category'][$key] = '%category%';
 	}
 
@@ -130,11 +142,59 @@ final class RVCTBS_Core {
 
 
 	/**
+	 * Plugin activation hook
+	 */
+	public function activation() {
+		flush_rewrite_rules();
+	}
+
+
+
+	/**
 	 * Plugin deactivation hook
 	 */
 	public function deactivation() {
+
+		// Remove current filter
 		remove_filter('category_rewrite_rules', array(&$this, 'rewrite_rules'));
+
+		// Restart the permastruct value
+		$this->restore_category_permastruct();
+
+		// Done
 		flush_rewrite_rules();
+	}
+
+
+
+	// Internal
+	// ---------------------------------------------------------------------------------------------------
+
+
+
+	/**
+	 * Replaces the category permastruct by the original value
+	 */
+	private function restore_category_permastruct() {
+
+		// Globals
+		global $wp_rewrite;
+
+		// Get the proper key
+		$key = $this->get_permastruct_key();
+
+		// Replaces current permastruct
+		$wp_rewrite->extra_permastructs['category'][$key] = $this->old_category_permastruct;
+	}
+
+
+
+	/**
+	 * Permastruct key based on version
+	 */
+	private function get_permastruct_key() {
+		global $wp_version;
+		return ($wp_version >= 3.4)? 'struct' : 0;
 	}
 
 
