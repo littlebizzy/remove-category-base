@@ -145,8 +145,8 @@ final class RVCTBS_Core_Rewrite {
 	 * Retrieve old base category rule
 	 */
 	private function get_old_base_rule() {
-		$old_base = get_option('category_base')? get_option('category_base') : 'category';
-		return trim($old_base, '/');
+		$old_base = trim(''.get_option('category_base'), '/');
+		return ('' === $old_base)? 'category' : $old_base;
 	}
 
 
