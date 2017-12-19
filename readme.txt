@@ -1,6 +1,7 @@
 === Remove Category Base ===
 
 Contributors: littlebizzy
+Donate link: https://www.patreon.com/littlebizzy
 Tags: remove, disable, category, base, permalinks
 Requires at least: 4.4
 Tested up to: 4.9
