@@ -78,6 +78,19 @@ Note: This defined constant will only affect the notices mentioned above, and wi
 
 * [No Category Base (WPML)](https://wordpress.org/plugins/no-category-base-wpml/)
 * [WP Remove Category Base](https://wordpress.org/plugins/wp-remove-category-base/)
+* [Remove Category URL](https://wordpress.org/plugins/remove-category-url/)
+* [WP No Base Permalink](https://wordpress.org/plugins/wp-no-base-permalink/)
+* [Single Category Permalink](https://wordpress.org/plugins/single-category-permalink/)
+* [WooCommerce Permalink Manager](https://wordpress.org/plugins/woo-permalink-manager/)
+* [Custom Permalinks](https://wordpress.org/plugins/custom-permalinks/)
+* [Permalinks Manager Lite](https://wordpress.org/plugins/permalink-manager/)
+* [Permalinks Customizer](https://wordpress.org/plugins/permalinks-customizer/)
+* [WP Category Permalink](https://wordpress.org/plugins/wp-category-permalink/)
+* [Slightly Troublesome Permalink](https://wordpress.org/plugins/slightly-troublesome-permalink/)
+* [FV Top Level Categories](https://wordpress.org/plugins/fv-top-level-cats/)
+* [Custom Post Type Permalinks](https://wordpress.org/plugins/custom-post-type-permalinks/)
+* [Category To Pages WUD](https://wordpress.org/plugins/category-to-pages-wud/)
+* {Beautiful Permalink](https://wordpress.org/plugins/beautiful-permalink/)
 
 #### Free Plugins ####
 
