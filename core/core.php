@@ -1,11 +1,15 @@
 <?php
 
+// Subpackage namespace
+namespace LittleBizzy\RemoveCategoryBase;
+
 /**
- * Remove Category Base - Core class
+ * Admin Notices class
  *
  * @package Remove Category Base
  * @subpackage Remove Category Base Core
  */
+
 final class RVCTBS_Core {
 
 
