@@ -1,12 +1,16 @@
 <?php
 
+// Subpackage namespace
+namespace LittleBizzy\RemoveCategoryBase;
+
 /**
  * Admin Notices class
  *
  * @package WordPress
  * @subpackage Admin Notices
  */
-final class RVCTBS_Admin_Notices {
+
+final class Admin_Notices {
 
 
 
@@ -18,10 +22,11 @@ final class RVCTBS_Admin_Notices {
 	/**
 	 * Rate Us
 	 */
-	private $days_before_display_rate_us = 3; // 3 days delay
+	private $days_before_display_rate_us = 1; // 1 day delay
 	private $days_dismissing_rate_us = 270; // 9 months reappear
-	private $rate_us_url = 'https://wordpress.org/support/plugin/remove-category-base-littlebizzy/reviews/#new-post';
-	private $rate_us_message = 'Thanks for using <strong>%plugin%</strong>. Please support our free work by rating this plugin with 5 stars on WordPress.org. <a href="%url%" target="_blank">Click here to rate us.</a>';
+	private $rate_us_url = 'https://wordpress.org/support/plugin/remove-category-base-littlebizzy/reviews/?rate=5#new-post';
+	private $rate_us_url2 = 'https://www.facebook.com/groups/littlebizzy/';
+	private $rate_us_message = 'Thanks for using <strong>%plugin%</strong>. Please support our free work by rating this plugin with 5 stars on WordPress.org. <a href="%url%" target="_blank">Click here to rate us.</a><br><br>You may also join our free <a href="%url2%" target="_blank">Facebook group</a> to post any questions or comments!';
 
 
 
@@ -31,11 +36,6 @@ final class RVCTBS_Admin_Notices {
 	private $days_dismissing_suggestions = 180; // 6 months reappear
 	private $suggestions_message = '%plugin% recommends the following free plugins:';
 	private $suggestions = array(
-		'404-to-homepage-littlebizzy' => array(
-			'name' => '404 To Homepage',
-			'desc' => 'Redirects all 404 (Not Found) errors to the homepage for a better user experience, less abuse from bots, and 100% elimination of Google GSC warnings.',
-			'filename' => '404-to-homepage.php',
-		),
 		'disable-author-pages-littlebizzy' => array(
 			'name' => 'Disable Author Pages',
 			'desc' => 'Completely disables author archives which then become 404 errors, converts author links to homepage links, and works with or without fancy permalinks.',
@@ -46,15 +46,20 @@ final class RVCTBS_Admin_Notices {
 			'desc' => 'Completely disables the built-in WordPress search function to prevent snoopers or bots from querying your database or slowing down your website.',
 			'filename' => 'disable-search.php',
 		),
+		'404-to-homepage-littlebizzy' => array(
+			'name' => '404 To Homepage',
+			'desc' => 'Redirects all 404 (Not Found) errors to the homepage for a better user experience, less abuse from bots, and 100% elimination of Google GSC warnings.',
+			'filename' => '404-to-homepage.php',
+		),
 		'force-https-littlebizzy' => array(
 			'name' => 'Force HTTPS',
 			'desc' => 'Redirects all HTTP requests to the HTTPS version and fixes all insecure static resources without altering the database (also works with CloudFlare).',
 			'filename' => 'force-https.php',
 		),
-		'server-status-littlebizzy' => array(
-			'name' => 'Server Status',
-			'desc' => 'Useful statistics about the server OS, CPU, RAM, load average, memory usage, IP address, hostname, timezone, disk space, PHP, MySQL, caches, etc.',
-			'filename' => 'server-status.php',
+		'enable-subtitles-littlebizzy' => array(
+			'name' => 'Enable Subtitles',
+			'desc' => 'Creates a the_subtitle function for use in WordPress posts and pages, such as for H2 subtitles, that can be called in template files or shortcodes.',
+			'filename' => 'enable-subtitles.php',
 		),
 	);
 
@@ -129,9 +134,8 @@ final class RVCTBS_Admin_Notices {
 		// Uninstall hook endpoint
 		register_uninstall_hook($this->plugin_file, array(__CLASS__, 'uninstall'));
 
-		// Prefix from the class name
-		$classname = explode('_', __CLASS__);
-		$this->prefix = strtolower($classname[0]);
+		// Prefix from namespace constant
+		$this->prefix = PREFIX.'_an_';
 
 		// Check notices
 		if (is_admin()) {
@@ -284,9 +288,35 @@ final class RVCTBS_Admin_Notices {
 
 		?><div class="<?php echo esc_attr($this->prefix); ?>-dismiss-rate-us notice notice-success is-dismissible" data-nonce="<?php echo esc_attr(wp_create_nonce($this->prefix.'-dismiss-rate-us')); ?>">
 
-			<p><?php echo str_replace('%url%', $this->rate_us_url, str_replace('%plugin%', $plugin_data['Name'], $this->rate_us_message)); ?></p>
+			<p><?php echo $this->replace_message_var('rate_us_url', 'url', str_replace('%plugin%', $plugin_data['Name'], $this->rate_us_message)); ?></p>
 
 		</div><?php
+	}
+
+
+
+	/**
+	 * Replace until 10 properties from this object with their values
+	 */
+	private function replace_message_var($property, $var, $message, $variations = 10) {
+
+		// Allow n variations
+		for ($index = 1; $index <= $variations; $index++) {
+
+			// Prepare suffix
+			$suffix = (1 == $index)? '' : $index;
+
+			// Check property
+			$name = $property.$suffix;
+			if (!empty($this->{$name})) {
+
+				// Replace message vars
+				$message = str_replace('%'.$var.$suffix.'%', $this->{$name}, $message);
+			}
+		}
+
+		// Done
+		return $message;
 	}
 
 
