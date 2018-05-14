@@ -207,9 +207,9 @@ Please avoid leaving negative reviews in order to get a feature implemented. Ins
 * partial support for `define('DISABLE_NAG_NOTICES', true);`
 
 = 1.0.1 =
+* added recommended plugins notice
+* added rating request notice
 * updated plugin meta
-* added recommended plugins
-* added rating request
 
 = 1.0.0 =
 * initial release
