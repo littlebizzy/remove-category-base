@@ -107,7 +107,7 @@ final class RVCTBS_Core {
 	 * Category rewrites
 	 */
 	public function rewrite_rules($rules) {
-		require_once RVCTBS_PATH.'/core/rewrite.php';
+		require_once dirname(FILE).'/core/rewrite.php';
 		return RVCTBS_Core_Rewrite::instance()->get_rules();
 	}
 
@@ -120,7 +120,7 @@ final class RVCTBS_Core {
 
 		// Check redirection query
 		if (!empty($query_vars['rvctbs_category_redirect'])) {
-			require_once RVCTBS_PATH.'/core/redirect.php';
+			require_once dirname(FILE).'/core/redirect.php';
 			RVCTBS_Core_Redirect::instance($query_vars['rvctbs_category_redirect']);
 		}
 
