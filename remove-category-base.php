@@ -38,7 +38,7 @@ if (false !== \LittleBizzy\RemoveCategoryBase\Admin_Notices_MS::instance(FILE)) 
 }
 
 // Load main class
-require_once RVCTBS_PATH.'/core/core.php';
+require_once dirname(FILE).'/core/core.php';
 RVCTBS_Core::instance();
 
 // Plugin hooks
