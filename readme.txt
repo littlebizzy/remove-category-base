@@ -90,7 +90,7 @@ Note: This defined constant will only affect the notices mentioned above, and wi
 * [FV Top Level Categories](https://wordpress.org/plugins/fv-top-level-cats/)
 * [Custom Post Type Permalinks](https://wordpress.org/plugins/custom-post-type-permalinks/)
 * [Category To Pages WUD](https://wordpress.org/plugins/category-to-pages-wud/)
-* {Beautiful Permalink](https://wordpress.org/plugins/beautiful-permalink/)
+* [Beautiful Permalink](https://wordpress.org/plugins/beautiful-permalink/)
 
 #### Free Plugins ####
 
