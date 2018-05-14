@@ -1,7 +1,10 @@
 <?php
 
+// Subpackage namespace
+namespace LittleBizzy\RemoveCategoryBase;
+
 /**
- * Remove Category Base - Redirect class
+ * Admin Notices class
  *
  * @package Remove Category Base
  * @subpackage Remove Category Base Core
