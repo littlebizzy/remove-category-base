@@ -199,12 +199,12 @@ Please avoid leaving negative reviews in order to get a feature implemented. Ins
 * updated recommended plugins
 
 = 1.0.3 =
-* better support for `define('DISABLE_NAG_NOTICES', true);`
+* better support for `DISABLE_NAG_NOTICES`
 
 = 1.0.2 =
 * tested with WP 4.9
+* partial support for `DISABLE_NAG_NOTICES`
 * updated plugin meta
-* partial support for `define('DISABLE_NAG_NOTICES', true);`
 
 = 1.0.1 =
 * added recommended plugins notice
