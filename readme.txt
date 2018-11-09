@@ -4,7 +4,7 @@ Contributors: littlebizzy
 Donate link: https://www.patreon.com/littlebizzy
 Tags: remove, disable, category, base, permalinks
 Requires at least: 4.4
-Tested up to: 4.9
+Tested up to: 5.0
 Requires PHP: 7.0
 Multisite support: No
 Stable tag: 1.1.0
