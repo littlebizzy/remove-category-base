@@ -82,8 +82,6 @@ We released this plugin in response to our managed hosting clients asking for be
 
 > "The innovation that this industry talks about so much is bullshit. Anybody can innovate... 99% of it is 'Get the work done.' The real work is in the details." -- Linus Torvalds
 
-> "Software applications may follow the pattern of corporations. The desire to get more work done in a single application leads to bloated applications, just as the desire to avoid transaction costs leads to bloated bureaucracies. But bloated bureaucracies face competition from lean start-ups and eventually shed some of their bloat or die. Bloated software may face similar competition from leaner applications. There are some signs that consumers are starting to appreciate software and devices that do less and do it well." -- John D. Cook
-
 #### Search Keywords ####
 
 beautiful permalink, category to pages wud, custom permalinks, custom post type permalinks, fv top level categories, no category base (wpml), permalinks customizer, permalinks manager lite, remove category url, single category permalink, slightly troublesome permalink, woocommerce permalink manager, wp category permalink, wp no base permalink, wp remove category base
