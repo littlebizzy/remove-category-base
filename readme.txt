@@ -43,7 +43,7 @@ Any of our WordPress plugins may also be loaded as "Must-Use" plugins by using o
 #### Defined Constants ####
 
     /* Plugin Meta */
-    `define('DISABLE_NAG_NOTICES', true);`
+    define('DISABLE_NAG_NOTICES', true);
 
 #### Technical Details ####
 
