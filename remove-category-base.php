@@ -17,10 +17,10 @@ namespace LittleBizzy\RemoveCategoryBase;
 // Plugin constants
 define('RVCTBS_FILE', __FILE__);
 define('RVCTBS_PATH', dirname(RVCTBS_FILE));
-define('RVCTBS_VERSION', '1.1.0');
+define('RVCTBS_VERSION', '1.2.0');
 const FILE = __FILE__;
 const PREFIX = 'rvctbs';
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 
 // Block direct calls
 if (!function_exists('add_action'))
