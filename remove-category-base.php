@@ -96,8 +96,9 @@ add_filter('request', 'redirect_old_category_base');
 function redirect_old_category_base($query_vars) {
     if (isset($query_vars['category_redirect'])) {
         // Check if the site uses trailing slashes
+        $permalink_structure = get_option('permalink_structure');
         $catlink = home_url($query_vars['category_redirect']);
-        $catlink = (get_option('permalink_structure') && substr(get_option('permalink_structure'), -1) === '/') 
+        $catlink = ($permalink_structure && substr($permalink_structure, -1) === '/') 
             ? trailingslashit($catlink) // Add trailing slash if permalinks end with '/'
             : untrailingslashit($catlink); // Remove trailing slash if not
 
