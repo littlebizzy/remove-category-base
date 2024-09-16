@@ -17,6 +17,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Disable WordPress.org updates for this plugin
+add_filter('gu_override_dot_org', function ($overrides) {
+    $overrides[] = 'remove-category-base/remove-category-base.php';
+    return $overrides;
+});
+
 // Flush rewrite rules once at the end of the request
 function remove_category_base_maybe_flush() {
     static $flush_needed = false;
