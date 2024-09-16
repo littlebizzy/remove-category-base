@@ -62,11 +62,12 @@ function update_category_rewrite_rules($rules) {
     $categories = get_categories(array('hide_empty' => false));
 
     foreach ($categories as $category) {
-        $category_nicename = esc_attr($category->slug);
+        // Sanitize the category slug
+        $category_nicename = sanitize_title($category->slug);
 
         // Handle parent categories
         if ($category->parent != 0) {
-            $category_nicename = esc_attr(get_category_parents($category->parent, false, '/', true)) . $category_nicename;
+            $category_nicename = sanitize_title(get_category_parents($category->parent, false, '/', true)) . $category_nicename;
         }
 
         // Add rewrite rules for pagination and feeds
@@ -77,7 +78,7 @@ function update_category_rewrite_rules($rules) {
     }
 
     // Redirect support from old category base
-    $old_category_base = esc_attr(get_option('category_base') ? get_option('category_base') : 'category');
+    $old_category_base = sanitize_title(get_option('category_base') ? get_option('category_base') : 'category');
     $old_category_base = trim($old_category_base, '/');
     $new_rules[$old_category_base . '/(.*)$'] = 'index.php?category_redirect=$matches[1]';
 
@@ -98,11 +99,11 @@ function redirect_old_category_base($query_vars) {
         // Check if the site uses trailing slashes
         $permalink_structure = get_option('permalink_structure');
         $catlink = home_url($query_vars['category_redirect']);
-        $catlink = ($permalink_structure && substr($permalink_structure, -1) === '/') 
+        $catlink = ($permalink_structure && substr($permalink_structure, -1) === '/')
             ? trailingslashit($catlink) // Add trailing slash if permalinks end with '/'
             : untrailingslashit($catlink); // Remove trailing slash if not
 
-        wp_redirect(esc_url_raw($catlink), 301); // Perform 301 redirect
+        wp_safe_redirect(esc_url_raw($catlink), 301); // Secure redirect
         exit();
     }
     return $query_vars;
@@ -112,7 +113,7 @@ function redirect_old_category_base($query_vars) {
 function remove_category_base_admin_notice_success() {
     ?>
     <div class="notice notice-success">
-        <p><?php _e('The category base rewrite rules have been successfully flushed.', 'remove-category-base'); ?></p>
+        <p><?php esc_html_e('The category base rewrite rules have been successfully flushed.', 'remove-category-base'); ?></p>
     </div>
     <?php
 }
