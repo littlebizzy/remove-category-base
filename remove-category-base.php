@@ -46,7 +46,7 @@ function update_category_rewrite_rules( $rules ) {
     $categories = get_categories( array( 'hide_empty' => false ) );
 
     foreach ( $categories as $category ) {
-        $category_nicename = rtrim( get_category_parents( $category->term_id, false, '/', true ), '/' ); // get full hierarchical path
+        $category_nicename = rtrim( get_category_parents( $category->term_id, false, '/', false ), '/' ); // get full hierarchical path without HTML
         $category_nicename = sanitize_title( $category_nicename ); // sanitize slug
 
         // Add rewrite rules for hierarchical category structures
@@ -57,8 +57,18 @@ function update_category_rewrite_rules( $rules ) {
 
     // Redirect old category base URLs
     $old_base = sanitize_title( get_option( 'category_base', 'category' ) );
-    $new_rules["{$old_base}/(.*)$"] = 'index.php?category_redirect=$matches[1]';
+    $old_base = trim( $old_base, '/' ); // Ensure no leading or trailing slashes
 
+    // Check if site uses trailing slashes in permalinks
+    $permalink_structure = get_option( 'permalink_structure' );
+    if ( $permalink_structure && substr( $permalink_structure, -1 ) === '/' ) {
+        // Site uses trailing slashes
+        $new_rules[ trailingslashit( $old_base ) . '(.*)$' ] = 'index.php?category_redirect=$matches[1]';
+    } else {
+        // Site does not use trailing slashes
+        $new_rules[ untrailingslashit( $old_base ) . '/(.*)$' ] = 'index.php?category_redirect=$matches[1]';
+    }
+    
     return $new_rules + $rules;
 }
 
@@ -70,7 +80,7 @@ add_filter( 'query_vars', function( $query_vars ) {
 
 // Handle 301 redirects for old category base URLs (supports both trailing and non-trailing slashes)
 add_filter( 'request', function( $query_vars ) {
-    if ( isset( $query_vars['category_redirect'] ) ) {
+    if ( isset( $query_vars['category_redirect'] ) && ! empty( $query_vars['category_redirect'] ) ) {
         $catlink = home_url( $query_vars['category_redirect'] );
         $permalink_structure = get_option( 'permalink_structure' );
 
@@ -93,13 +103,12 @@ add_action( 'delete_category', 'remove_category_base_flush_rewrite' );
 // Display admin success notice when rewrite rules have been flushed
 add_action( 'admin_notices', 'remove_category_base_admin_notice' );
 function remove_category_base_admin_notice() {
-    if ( get_transient( 'remove_category_base_flush_notice' ) ) {
+    if ( current_user_can( 'manage_options' ) ) {
         ?>
         <div class="notice notice-success">
             <p><?php esc_html_e( 'The category base has been removed and rewrite rules successfully flushed', 'remove-category-base' ); ?></p>
         </div>
         <?php
-        delete_transient( 'remove_category_base_flush_notice' );
     }
 }
 
