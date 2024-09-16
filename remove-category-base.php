@@ -95,8 +95,13 @@ function add_category_redirect_query_var($query_vars) {
 add_filter('request', 'redirect_old_category_base');
 function redirect_old_category_base($query_vars) {
     if (isset($query_vars['category_redirect'])) {
-        $catlink = trailingslashit(home_url()) . user_trailingslashit(esc_attr($query_vars['category_redirect']), 'category');
-        wp_redirect(esc_url_raw($catlink), 301);
+        // Check if the site uses trailing slashes
+        $catlink = home_url($query_vars['category_redirect']);
+        $catlink = (get_option('permalink_structure') && substr(get_option('permalink_structure'), -1) === '/') 
+            ? trailingslashit($catlink) // Add trailing slash if permalinks end with '/'
+            : untrailingslashit($catlink); // Remove trailing slash if not
+
+        wp_redirect(esc_url_raw($catlink), 301); // Perform 301 redirect
         exit();
     }
     return $query_vars;
