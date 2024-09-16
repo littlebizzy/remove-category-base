@@ -23,7 +23,34 @@ add_filter('gu_override_dot_org', function ($overrides) {
     return $overrides;
 });
 
-// Flush rewrite rules once at the end of the request
+// Flush rewrite rules during plugin activation
+register_activation_hook(__FILE__, 'remove_category_base_on_activation');
+
+function remove_category_base_on_activation() {
+    // Defer the flush until after WordPress has fully loaded all rewrite rules
+    add_action('init', 'remove_category_base_flush_rewrite_rules_late');
+}
+
+// Flush rewrite rules after the init hook
+function remove_category_base_flush_rewrite_rules_late() {
+    flush_rewrite_rules();
+}
+
+// Flush rewrite rules on deactivation
+register_deactivation_hook(__FILE__, 'remove_category_base_flush_rewrite_rules');
+
+// Flush rewrite rules function
+function remove_category_base_flush_rewrite_rules() {
+    flush_rewrite_rules();
+    add_action('admin_init', 'remove_category_base_admin_notice_success');
+}
+
+// Trigger flush when categories are created, edited, or deleted
+add_action('created_category', 'remove_category_base_maybe_flush');
+add_action('delete_category', 'remove_category_base_maybe_flush');
+add_action('edited_category', 'remove_category_base_maybe_flush');
+
+// Flush rewrite rules once at the end of the request if necessary
 function remove_category_base_maybe_flush() {
     static $flush_needed = false;
 
@@ -32,21 +59,6 @@ function remove_category_base_maybe_flush() {
         add_action('shutdown', 'remove_category_base_flush_rewrite_rules');
     }
 }
-
-// Flush rewrite rules
-function remove_category_base_flush_rewrite_rules() {
-    flush_rewrite_rules();
-    add_action('admin_init', 'remove_category_base_admin_notice_success');
-}
-
-// Register flush rewrite rules on activation/deactivation
-register_activation_hook(__FILE__, 'remove_category_base_flush_rewrite_rules');
-register_deactivation_hook(__FILE__, 'remove_category_base_flush_rewrite_rules');
-
-// Trigger flush when categories are created, edited, or deleted
-add_action('created_category', 'remove_category_base_maybe_flush');
-add_action('delete_category', 'remove_category_base_maybe_flush');
-add_action('edited_category', 'remove_category_base_maybe_flush');
 
 // Remove the category base from permalinks
 add_action('init', 'remove_category_base');
@@ -62,15 +74,14 @@ function update_category_rewrite_rules($rules) {
     $categories = get_categories(array('hide_empty' => false));
 
     foreach ($categories as $category) {
+        // Get the full hierarchical path of the category
+        $category_nicename = get_category_parents($category->term_id, false, '/', true);
+        $category_nicename = rtrim($category_nicename, '/'); // Remove trailing slash from hierarchy
+
         // Sanitize the category slug
-        $category_nicename = sanitize_title($category->slug);
+        $category_nicename = sanitize_title($category_nicename);
 
-        // Handle parent categories
-        if ($category->parent != 0) {
-            $category_nicename = sanitize_title(get_category_parents($category->parent, false, '/', true)) . $category_nicename;
-        }
-
-        // Add rewrite rules for pagination and feeds
+        // Add rewrite rules for hierarchical category structures
         global $wp_rewrite;
         $new_rules["({$category_nicename})/{$wp_rewrite->pagination_base}/?([0-9]{1,})/?$"] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
         $new_rules["({$category_nicename})/(feed|rdf|rss|rss2|atom)/?$"] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
