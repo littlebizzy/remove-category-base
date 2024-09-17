@@ -2,7 +2,7 @@
 /*
 Plugin Name: Remove Category Base
 Plugin URI: https://www.littlebizzy.com/plugins/remove-category-base
-Description: Removes and 301s category base
+Description: Removes and 301 redirects category base
 Version: 2.0.0
 Author: LittleBizzy
 Author URI: https://www.littlebizzy.com
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Disable WordPress.org updates for this plugin
-add_filter( 'gu_override_dot_org', function ( $overrides ) {
+add_filter( 'gu_override_dot_org', function( $overrides ) {
     $overrides[] = 'remove-category-base/remove-category-base.php';
     return $overrides;
 });
@@ -27,20 +27,36 @@ add_filter( 'gu_override_dot_org', function ( $overrides ) {
 add_action( 'init', 'remove_category_base' );
 function remove_category_base() {
     global $wp_rewrite;
-    $wp_rewrite->extra_permastructs['category']['struct'] = '%category%';
+    // Ensure category structure is set only if needed
+    if ( $wp_rewrite->extra_permastructs['category']['struct'] !== '%category%' ) {
+        $wp_rewrite->extra_permastructs['category']['struct'] = '%category%';
+    }
 }
 
-// Hook to flush rewrite rules during plugin activation
+// Hook to flush rewrite rules and rebuild on activation
 register_activation_hook( __FILE__, 'remove_category_base_on_activation' );
 function remove_category_base_on_activation() {
-    flush_rewrite_rules();  // Ensure the rules are flushed once
+    global $wp_rewrite;
+
+    // Rebuild the rewrite rules array (to simulate Permalink page save)
+    $wp_rewrite->init();
+
+    // Flush rewrite rules to apply changes
+    flush_rewrite_rules();
 }
 
 // Hook to restore default structure and flush rewrite rules on deactivation
 register_deactivation_hook( __FILE__, 'remove_category_base_on_deactivation' );
 function remove_category_base_on_deactivation() {
     global $wp_rewrite;
+
+    // Restore the default category base structure
     $wp_rewrite->extra_permastructs['category']['struct'] = '/category/%category%';
+
+    // Rebuild the rewrite rules array
+    $wp_rewrite->init();
+
+    // Flush the rules to apply them
     flush_rewrite_rules();
 }
 
@@ -56,9 +72,9 @@ function update_category_rewrite_rules( $rules ) {
     $categories = get_categories( array( 'hide_empty' => false ) );
 
     foreach ( $categories as $category ) {
-        // Get full hierarchical path without HTML
-        $category_nicename = rtrim( get_category_parents( $category->term_id, false, '/', false ), '/' ); // get full hierarchical path without HTML
-        $category_nicename = sanitize_title( $category_nicename ); // sanitize slug
+        // Get full hierarchical path and sanitize it
+        $category_nicename = rtrim( get_category_parents( $category->term_id, false, '/', false ), '/' );
+        $category_nicename = sanitize_title( $category_nicename );
 
         // Add rewrite rules for hierarchical category structures
         $new_rules["({$category_nicename})/page/?([0-9]{1,})/?$"] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
