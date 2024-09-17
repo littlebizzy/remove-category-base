@@ -53,6 +53,7 @@ function update_category_rewrite_rules( $rules ) {
     $categories = get_categories( array( 'hide_empty' => false ) );
 
     foreach ( $categories as $category ) {
+        // Get full hierarchical path without HTML
         $category_nicename = rtrim( get_category_parents( $category->term_id, false, '/', false ), '/' ); // get full hierarchical path without HTML
         $category_nicename = sanitize_title( $category_nicename ); // sanitize slug
 
@@ -65,7 +66,7 @@ function update_category_rewrite_rules( $rules ) {
     // Redirect old category base URLs
     $old_base = sanitize_title( get_option( 'category_base', 'category' ) );
     $old_base = trim( $old_base, '/' ); // Ensure no leading or trailing slashes
-
+    
     // Check if site uses trailing slashes in permalinks
     $permalink_structure = get_option( 'permalink_structure' );
     if ( $permalink_structure && substr( $permalink_structure, -1 ) === '/' ) {
@@ -88,7 +89,8 @@ add_filter( 'query_vars', function( $query_vars ) {
 // Handle 301 redirects for old category base URLs (supports both trailing and non-trailing slashes)
 add_filter( 'request', function( $query_vars ) {
     if ( isset( $query_vars['category_redirect'] ) && ! empty( $query_vars['category_redirect'] ) ) {
-        $catlink = home_url( $query_vars['category_redirect'] );
+        // Build the new category link
+        $catlink = home_url( sanitize_title( $query_vars['category_redirect'] ) );
         $permalink_structure = get_option( 'permalink_structure' );
 
         // Redirect based on permalink structure (trailing or non-trailing slashes)
