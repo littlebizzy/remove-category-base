@@ -23,29 +23,31 @@ add_filter( 'gu_override_dot_org', function ( $overrides ) {
     return $overrides;
 });
 
-// Ensure rewrite rules are flushed after WordPress is fully loaded
-add_action( 'wp_loaded', 'remove_category_base_flush_rewrite' );
-function remove_category_base_flush_rewrite() {
-    flush_rewrite_rules();
-}
-
-// Hook to flush rewrite rules during plugin activation
-register_activation_hook( __FILE__, 'remove_category_base_flush_rewrite' );
-
-// Hook to flush rewrite rules during plugin deactivation
-register_deactivation_hook( __FILE__, 'remove_category_base_flush_rewrite' );
-
-// Hook to flush rewrite rules when categories are created, edited, or deleted
-add_action( 'created_category', 'remove_category_base_flush_rewrite' );
-add_action( 'edited_category', 'remove_category_base_flush_rewrite' );
-add_action( 'delete_category', 'remove_category_base_flush_rewrite' );
-
-// Remove category base from permalinks
+// Hook to remove the category base from permalinks
 add_action( 'init', 'remove_category_base' );
 function remove_category_base() {
     global $wp_rewrite;
     $wp_rewrite->extra_permastructs['category']['struct'] = '%category%';
 }
+
+// Hook to flush rewrite rules during plugin activation
+register_activation_hook( __FILE__, 'remove_category_base_on_activation' );
+function remove_category_base_on_activation() {
+    flush_rewrite_rules();  // Ensure the rules are flushed once
+}
+
+// Hook to restore default structure and flush rewrite rules on deactivation
+register_deactivation_hook( __FILE__, 'remove_category_base_on_deactivation' );
+function remove_category_base_on_deactivation() {
+    global $wp_rewrite;
+    $wp_rewrite->extra_permastructs['category']['struct'] = '/category/%category%';
+    flush_rewrite_rules();
+}
+
+// Hook to flush rewrite rules when categories are created, edited, or deleted
+add_action( 'created_category', 'flush_rewrite_rules' );
+add_action( 'edited_category', 'flush_rewrite_rules' );
+add_action( 'delete_category', 'flush_rewrite_rules' );
 
 // Update category rewrite rules to handle hierarchy, pagination, and feeds
 add_filter( 'category_rewrite_rules', 'update_category_rewrite_rules' );
