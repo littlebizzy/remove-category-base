@@ -23,7 +23,8 @@ add_filter( 'gu_override_dot_org', function ( $overrides ) {
     return $overrides;
 });
 
-// Flush rewrite rules during plugin activation, deactivation, and category changes
+// Ensure rewrite rules are flushed after WordPress is fully loaded
+add_action( 'wp_loaded', 'remove_category_base_flush_rewrite' );
 function remove_category_base_flush_rewrite() {
     flush_rewrite_rules();
 }
