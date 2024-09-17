@@ -50,8 +50,11 @@ register_deactivation_hook( __FILE__, 'remove_category_base_on_deactivation' );
 function remove_category_base_on_deactivation() {
     global $wp_rewrite;
 
-    // Restore the default category base structure
+    // Restore the default category base structure (without overwriting user's saved option)
     $wp_rewrite->extra_permastructs['category']['struct'] = '/category/%category%';
+
+    // Clear any related transients
+    delete_option( 'rewrite_rules' );
 
     // Rebuild the rewrite rules array
     $wp_rewrite->init();
