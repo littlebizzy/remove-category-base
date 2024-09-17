@@ -23,14 +23,21 @@ add_filter( 'gu_override_dot_org', function ( $overrides ) {
     return $overrides;
 });
 
-// Flush rewrite rules on plugin activation and deactivation
-register_activation_hook( __FILE__, 'remove_category_base_flush_rewrite' );
-register_deactivation_hook( __FILE__, 'remove_category_base_flush_rewrite' );
-
-// Flush rewrite rules function
+// Flush rewrite rules during plugin activation, deactivation, and category changes
 function remove_category_base_flush_rewrite() {
     flush_rewrite_rules();
 }
+
+// Hook to flush rewrite rules during plugin activation
+register_activation_hook( __FILE__, 'remove_category_base_flush_rewrite' );
+
+// Hook to flush rewrite rules during plugin deactivation
+register_deactivation_hook( __FILE__, 'remove_category_base_flush_rewrite' );
+
+// Hook to flush rewrite rules when categories are created, edited, or deleted
+add_action( 'created_category', 'remove_category_base_flush_rewrite' );
+add_action( 'edited_category', 'remove_category_base_flush_rewrite' );
+add_action( 'delete_category', 'remove_category_base_flush_rewrite' );
 
 // Remove category base from permalinks
 add_action( 'init', 'remove_category_base' );
@@ -94,23 +101,6 @@ add_filter( 'request', function( $query_vars ) {
     }
     return $query_vars;
 });
-
-// Flush rewrite rules when categories are created, edited, or deleted
-add_action( 'created_category', 'remove_category_base_flush_rewrite' );
-add_action( 'edited_category', 'remove_category_base_flush_rewrite' );
-add_action( 'delete_category', 'remove_category_base_flush_rewrite' );
-
-// Display admin success notice when rewrite rules have been flushed
-add_action( 'admin_notices', 'remove_category_base_admin_notice' );
-function remove_category_base_admin_notice() {
-    if ( current_user_can( 'manage_options' ) ) {
-        ?>
-        <div class="notice notice-success">
-            <p><?php esc_html_e( 'The category base has been removed and rewrite rules successfully flushed', 'remove-category-base' ); ?></p>
-        </div>
-        <?php
-    }
-}
 
 // Ref: ChatGPT
 // Ref: https://wordpress.org/plugins/no-category-base-wpml/
