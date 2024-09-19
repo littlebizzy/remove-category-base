@@ -45,21 +45,24 @@ function remove_category_base_on_activation() {
     flush_rewrite_rules();
 }
 
-// Hook to restore default structure and flush rewrite rules on deactivation
+// Hook to restore default structure and force a full permalink refresh on deactivation
 register_deactivation_hook( __FILE__, 'remove_category_base_on_deactivation' );
 function remove_category_base_on_deactivation() {
-    global $wp_rewrite;
+    global $wp_rewrite, $wpdb;
 
     // Restore the default category base structure (without overwriting user's saved option)
     $wp_rewrite->extra_permastructs['category']['struct'] = '/category/%category%';
 
-    // Clear any related transients
-    delete_option( 'rewrite_rules' );
+    // Manually clear rewrite rules from the database
+    $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name = 'rewrite_rules'" ); 
 
-    // Rebuild the rewrite rules array
+    // Manually refresh permalink settings by calling the function WordPress uses when saving permalinks
+    global $wp_rewrite;
     $wp_rewrite->init();
-
-    // Flush the rules to apply them
+    $permalink_structure = get_option( 'permalink_structure' );
+    $wp_rewrite->set_permalink_structure( $permalink_structure );
+    
+    // Flush rewrite rules again after recalculating them
     flush_rewrite_rules();
 }
 
